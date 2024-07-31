@@ -1,0 +1,7 @@
+# Virtual envirement for python project 
+/venv/
+
+# Data symbolic link 
+Data
+# Data folder (if not symlink)
+/Data/
