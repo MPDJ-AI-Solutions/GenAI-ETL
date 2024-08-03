@@ -3,7 +3,7 @@ from psycopg2 import sql
 
 # Database connection parameters
 db_params = {
-    'dbname': 'Cities_Claude',
+    'dbname': 'cities_claude',
     'user': 'claude',
     'password': '1234',
     'host': 'localhost',

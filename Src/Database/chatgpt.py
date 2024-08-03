@@ -3,7 +3,7 @@ from psycopg2 import sql
 
 # Database connection parameters
 db_params = {
-    'dbname': 'Cities_GPT',     # replace with your database name
+    'dbname': 'cities_gpt',     # replace with your database name
     'user': 'gpt',                 # replace with your PostgreSQL username
     'password': '1234',              # replace with your PostgreSQL password
     'host': 'localhost',            # replace with your PostgreSQL host

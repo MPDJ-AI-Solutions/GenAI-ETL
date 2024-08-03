@@ -119,7 +119,7 @@ def create_tables(db_name, user, password, host, port):
 
 if __name__ == "__main__":
     # Replace with your PostgreSQL credentials
-    db_name = "Cities_Gemini"
+    db_name = "cities_gemini"
     user = "gemini"
     password = "1234"
     host = "localhost"
