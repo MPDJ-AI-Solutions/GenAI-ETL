@@ -1,5 +1,9 @@
 import pandas as pd
 
-data = pd.read_csv("../Data/GUS/WYNA_2497_CTAB_20240731220629.csv", sep=';')
+def print_file_info(path):
+    data = pd.read_csv(path, sep=';')
+    data.info()
 
-print(data.head())
+print_file_info('./Data/Apartments/apartments_pl_2023_08.csv')
+print_file_info('./Data/GUS/RYNE_3783_CTAB_20240731215821.csv')
+print_file_info('./Data/Jobs/202309_soft_eng_jobs_pol.csv')
