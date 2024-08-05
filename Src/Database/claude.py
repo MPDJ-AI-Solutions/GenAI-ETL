@@ -1,19 +1,10 @@
 import psycopg2
-from psycopg2 import sql
+import configparser
 
-# Database connection parameters
-db_params = {
-    'dbname': 'cities_claude',
-    'user': 'claude',
-    'password': '1234',
-    'host': 'localhost',
-    'port': '5432'
-}
-
-# SQL script to create tables and constraints
-create_tables_script = """
-CREATE TABLE IF NOT EXISTS public."Cities"
-(
+def create_tables(cursor):
+    sql_script = """
+    BEGIN;
+    CREATE TABLE IF NOT EXISTS public."Cities" ( 
     id integer NOT NULL,
     city_name "char"[] NOT NULL,
     population_density real,
@@ -25,10 +16,9 @@ CREATE TABLE IF NOT EXISTS public."Cities"
     vacancies integer,
     average_salary real,
     CONSTRAINT "Cities_pkey" PRIMARY KEY (id)
-);
+    );
 
-CREATE TABLE IF NOT EXISTS public."Apartment_prices"
-(
+    CREATE TABLE IF NOT EXISTS public."Apartment_prices" ( 
     id "char"[] NOT NULL,
     city_id integer NOT NULL,
     square_meters integer,
@@ -57,10 +47,9 @@ CREATE TABLE IF NOT EXISTS public."Apartment_prices"
     has_storage_room boolean,
     price integer NOT NULL,
     CONSTRAINT "Apartment_prices_pkey" PRIMARY KEY (id)
-);
+    );
 
-CREATE TABLE IF NOT EXISTS public."Sofware_jobs"
-(
+    CREATE TABLE IF NOT EXISTS public."Sofware_jobs" ( 
     id integer NOT NULL,
     city_id integer NOT NULL,
     company "char"[],
@@ -72,68 +61,65 @@ CREATE TABLE IF NOT EXISTS public."Sofware_jobs"
     b2b_salary_min real,
     b2b_salary_max real,
     CONSTRAINT "Sofware_jobs_pkey" PRIMARY KEY (id)
-);
+    );
 
-ALTER TABLE IF EXISTS public."Apartment_prices"
+    ALTER TABLE IF EXISTS public."Apartment_prices"
     ADD CONSTRAINT "City_ref" FOREIGN KEY (city_id)
     REFERENCES public."Cities" (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION;
 
-ALTER TABLE IF EXISTS public."Sofware_jobs"
+    ALTER TABLE IF EXISTS public."Sofware_jobs"
     ADD CONSTRAINT "City_ref" FOREIGN KEY (city_id)
     REFERENCES public."Cities" (id) MATCH SIMPLE
     ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-"""
+    ON DELETE NO ACTION NOT VALID;
+    END;
+    """
+    cursor.execute(sql_script)
 
-def create_database():
+def main():
+    # Read connection details from connection.cfg
+    config = configparser.ConfigParser()
+    config.read('./Src/Database/claude_connection.cfg')
+
+    # Get connection details
+    db_name = config['PostgreSQL']['database']
+    user = config['PostgreSQL']['user']
+    password = config['PostgreSQL']['password']
+    host = config['PostgreSQL']['host']
+    port = config['PostgreSQL']['port']
+
+    # Connect to the PostgreSQL database
     try:
-        # Connect to the default 'postgres' database
-        conn = psycopg2.connect(**db_params)
-        conn.autocommit = True
-        cursor = conn.cursor()
+        conn = psycopg2.connect(
+            dbname=db_name,
+            user=user,
+            password=password,
+            host=host,
+            port=port
+        )
+        print("Connected to the database successfully.")
 
-        # Create the new database
-        cursor.execute(sql.SQL("CREATE DATABASE {}").format(
-            sql.Identifier(db_params['dbname'])
-        ))
+        # Create a cursor
+        cur = conn.cursor()
 
-        print(f"Database '{db_params['dbname']}' created successfully.")
-
-    except psycopg2.Error as e:
-        print(f"An error occurred while creating the database: {e}")
-
-    finally:
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
-
-def create_tables():
-    try:
-        # Connect to the newly created database
-        conn = psycopg2.connect(**db_params)
-        cursor = conn.cursor()
-
-        # Execute the SQL script to create tables and constraints
-        cursor.execute(create_tables_script)
+        # Create tables
+        create_tables(cur)
 
         # Commit the changes
         conn.commit()
+        print("Tables created successfully.")
 
-        print("Tables and constraints created successfully.")
-
-    except psycopg2.Error as e:
-        print(f"An error occurred while creating tables: {e}")
+    except (Exception, psycopg2.Error) as error:
+        print("Error while connecting to PostgreSQL or creating tables:", error)
 
     finally:
-        if cursor:
-            cursor.close()
+        # Close the cursor and connection
         if conn:
+            cur.close()
             conn.close()
+            print("PostgreSQL connection is closed.")
 
 if __name__ == "__main__":
-    create_database()
-    create_tables()
+    main()

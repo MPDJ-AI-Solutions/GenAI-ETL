@@ -1,39 +1,12 @@
 import psycopg2
+import configparser
 
-def create_database(db_name, user, password, host, port):
-    """Creates a PostgreSQL database."""
-
-    conn = psycopg2.connect(
-        database="postgres",
-        user=user,
-        password=password,
-        host=host,
-        port=port
-    )
-    conn.autocommit = True
-    cursor = conn.cursor()  
-
-
-    cursor.execute(f"CREATE DATABASE {db_name}")
-    cursor.close()
-    conn.close()
-
-def create_tables(db_name, user, password, host, port):
-    """Creates tables in the specified PostgreSQL database."""
-
-    conn = psycopg2.connect(
-        database=db_name,
-        user=user,
-        password=password,
-        host=host,
-        port=port
-    )
-    conn.autocommit = True
-    cursor = conn.cursor()
+def create_tables(conn, cur):
+    """Creates tables in the PostgreSQL database."""
 
     sql_script = """
-    CREATE TABLE IF NOT EXISTS
-    public."Cities"
+    BEGIN;
+    CREATE TABLE IF NOT EXISTS public."Cities"
     (
         id integer NOT NULL,
         city_name "char"[] NOT NULL,
@@ -48,8 +21,7 @@ def create_tables(db_name, user, password, host, port):
         CONSTRAINT "Cities_pkey" PRIMARY KEY (id)
     );
 
-    CREATE TABLE IF NOT EXISTS
-    public."Apartment_prices"
+    CREATE TABLE IF NOT EXISTS public."Apartment_prices"
     (
         id "char"[] NOT NULL,
         city_id integer NOT NULL,
@@ -81,8 +53,7 @@ def create_tables(db_name, user, password, host, port):
         CONSTRAINT "Apartment_prices_pkey" PRIMARY KEY (id)
     );
 
-    CREATE TABLE IF NOT EXISTS
-    public."Sofware_jobs"
+    CREATE TABLE IF NOT EXISTS public."Sofware_jobs"
     (
         id integer NOT NULL,
         city_id integer NOT NULL,
@@ -97,33 +68,45 @@ def create_tables(db_name, user, password, host, port):
         CONSTRAINT "Sofware_jobs_pkey" PRIMARY KEY (id)
     );
 
-    ALTER TABLE IF EXISTS
-    public."Apartment_prices"
+    ALTER TABLE IF EXISTS public."Apartment_prices"
         ADD CONSTRAINT "City_ref" FOREIGN KEY (city_id)
         REFERENCES public."Cities" (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 
-    ALTER TABLE IF EXISTS
-    public."Sofware_jobs"
+    ALTER TABLE IF EXISTS public."Sofware_jobs"
         ADD CONSTRAINT "City_ref" FOREIGN KEY (city_id)
         REFERENCES public."Cities" (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
         NOT VALID;
+
+    END;
     """
 
-    cursor.execute(sql_script)
-    cursor.close()
+    cur.execute(sql_script)
+    conn.commit()
+
+def main():
+    """Reads connection details from config file and creates tables."""
+
+    config = configparser.ConfigParser()
+    config.read('./Src/Database/gemini_connection.cfg')
+
+    conn = psycopg2.connect(
+        database=config['postgresql']['database'],
+        user=config['postgresql']['user'],
+        password=config['postgresql']['password'],
+        host=config['postgresql']['address'],
+        port=config['postgresql']['port']
+    )
+
+    cur = conn.cursor()
+
+    create_tables(conn, cur)
+
+    cur.close()
     conn.close()
 
-if __name__ == "__main__":
-    # Replace with your PostgreSQL credentials
-    db_name = "cities_gemini"
-    user = "gemini"
-    password = "1234"
-    host = "localhost"
-    port = "5432"
-
-    create_database(db_name, user, password, host, port)
-    create_tables(db_name, user, password, host, port)
+if __name__ == '__main__':
+    main()
