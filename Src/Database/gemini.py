@@ -8,8 +8,8 @@ def create_tables(conn, cur):
     BEGIN;
     CREATE TABLE IF NOT EXISTS public."Cities"
     (
-        id integer NOT NULL,
-        city_name "char"[] NOT NULL,
+        id SERIAL,
+        city_name text NOT NULL,
         population_density real,
         population integer,
         residential_buildings integer,
@@ -23,7 +23,7 @@ def create_tables(conn, cur):
 
     CREATE TABLE IF NOT EXISTS public."Apartment_prices"
     (
-        id "char"[] NOT NULL,
+        id SERIAL,
         city_id integer NOT NULL,
         square_meters integer,
         rooms integer,
@@ -41,13 +41,13 @@ def create_tables(conn, cur):
         restaurant_distance real,
         college_distance real,
         pharmacy_distance real,
-        ownership "char"[],
-        building_material "char"[],
-        condition "char"[],
+        ownership text,
+        building_material text,
+        condition text,
         has_parking_space boolean,
         has_balcony boolean,
         has_elevator boolean,
-        "has_security " boolean,
+        has_security boolean,
         has_storage_room boolean,
         price integer NOT NULL,
         CONSTRAINT "Apartment_prices_pkey" PRIMARY KEY (id)
@@ -55,12 +55,12 @@ def create_tables(conn, cur):
 
     CREATE TABLE IF NOT EXISTS public."Sofware_jobs"
     (
-        id integer NOT NULL,
-        city_id integer NOT NULL,
-        company "char"[],
+        id SERIAL,
+        city_id integer,
+        company text,
         company_size real,
-        technology "char"[],
-        seniority "char"[],
+        technology text,
+        seniority text,
         emp_salary_min real,
         emp_salary_max real,
         b2b_salary_min real,

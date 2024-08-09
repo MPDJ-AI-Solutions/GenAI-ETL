@@ -5,3 +5,5 @@
 Data
 # Data folder (if not symlink)
 /Data/
+
+__pycache__/

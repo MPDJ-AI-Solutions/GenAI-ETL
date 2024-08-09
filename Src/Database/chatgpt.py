@@ -1,5 +1,6 @@
 import psycopg2
 from configparser import ConfigParser
+import measure
 
 def config(filename='./Src/Database/chatgpt_connection.cfg', section='database'):
     parser = ConfigParser()
@@ -20,8 +21,8 @@ def create_tables():
         """
         CREATE TABLE IF NOT EXISTS public."Cities"
         (
-            id integer NOT NULL,
-            city_name "char"[] NOT NULL,
+            id SERIAL, 
+            city_name text NOT NULL,
             population_density real,
             population integer,
             residential_buildings integer,
@@ -36,7 +37,7 @@ def create_tables():
         """
         CREATE TABLE IF NOT EXISTS public."Apartment_prices"
         (
-            id "char"[] NOT NULL,
+            id SERIAL,
             city_id integer NOT NULL,
             square_meters integer,
             rooms integer,
@@ -54,32 +55,32 @@ def create_tables():
             restaurant_distance real,
             college_distance real,
             pharmacy_distance real,
-            ownership "char"[],
-            building_material "char"[],
-            condition "char"[],
+            ownership text,
+            building_material text,
+            condition text,
             has_parking_space boolean,
             has_balcony boolean,
             has_elevator boolean,
-            "has_security " boolean,
+            has_security boolean,
             has_storage_room boolean,
             price integer NOT NULL,
             CONSTRAINT "Apartment_prices_pkey" PRIMARY KEY (id)
         );
         """,
         """
-        CREATE TABLE IF NOT EXISTS public."Sofware_jobs"
+        CREATE TABLE IF NOT EXISTS public."Software_jobs"
         (
-            id integer NOT NULL,
-            city_id integer NOT NULL,
-            company "char"[],
+            id SERIAL,
+            city_id integer,
+            company text,
             company_size real,
-            technology "char"[],
-            seniority "char"[],
+            technology text,
+            seniority text,
             emp_salary_min real,
             emp_salary_max real,
             b2b_salary_min real,
             b2b_salary_max real,
-            CONSTRAINT "Sofware_jobs_pkey" PRIMARY KEY (id)
+            CONSTRAINT "Software_jobs_pkey" PRIMARY KEY (id)
         );
         """,
         """
@@ -90,7 +91,7 @@ def create_tables():
             ON DELETE NO ACTION;
         """,
         """
-        ALTER TABLE IF EXISTS public."Sofware_jobs"
+        ALTER TABLE IF EXISTS public."Software_jobs"
             ADD CONSTRAINT "City_ref" FOREIGN KEY (city_id)
             REFERENCES public."Cities" (id) MATCH SIMPLE
             ON UPDATE NO ACTION
@@ -115,4 +116,8 @@ def create_tables():
             conn.close()
 
 if __name__ == '__main__':
+    stopwatch = measure.Stopwatch()
+
+    stopwatch.restart()
     create_tables()
+    print(stopwatch.end())
