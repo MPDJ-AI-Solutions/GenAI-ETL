@@ -1,6 +1,5 @@
 import psycopg2
 from configparser import ConfigParser
-import measure
 
 def config(filename='./Src/Database/chatgpt_connection.cfg', section='database'):
     parser = ConfigParser()
@@ -51,7 +50,7 @@ def create_tables():
             school_distance real,
             clinic_distance real,
             post_office_distance real,
-            kindergarden_distance real,
+            kindergarten_distance real,
             restaurant_distance real,
             college_distance real,
             pharmacy_distance real,
@@ -116,8 +115,4 @@ def create_tables():
             conn.close()
 
 if __name__ == '__main__':
-    stopwatch = measure.Stopwatch()
-
-    stopwatch.restart()
     create_tables()
-    print(stopwatch.end())

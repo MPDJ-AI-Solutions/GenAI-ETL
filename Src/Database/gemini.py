@@ -37,7 +37,7 @@ def create_tables(conn, cur):
         school_distance real,
         clinic_distance real,
         post_office_distance real,
-        kindergarden_distance real,
+        kindergarten_distance real,
         restaurant_distance real,
         college_distance real,
         pharmacy_distance real,
@@ -53,7 +53,7 @@ def create_tables(conn, cur):
         CONSTRAINT "Apartment_prices_pkey" PRIMARY KEY (id)
     );
 
-    CREATE TABLE IF NOT EXISTS public."Sofware_jobs"
+    CREATE TABLE IF NOT EXISTS public."Software_jobs"
     (
         id SERIAL,
         city_id integer,
@@ -65,7 +65,7 @@ def create_tables(conn, cur):
         emp_salary_max real,
         b2b_salary_min real,
         b2b_salary_max real,
-        CONSTRAINT "Sofware_jobs_pkey" PRIMARY KEY (id)
+        CONSTRAINT "Sofware_jobs_pkey" PRIMARY KEY (id)s
     );
 
     ALTER TABLE IF EXISTS public."Apartment_prices"

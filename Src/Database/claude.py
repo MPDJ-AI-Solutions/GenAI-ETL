@@ -33,7 +33,7 @@ def create_tables(cursor):
     school_distance real,
     clinic_distance real,
     post_office_distance real,
-    kindergarden_distance real,
+    kindergarten_distance real,
     restaurant_distance real,
     college_distance real,
     pharmacy_distance real,
@@ -49,7 +49,7 @@ def create_tables(cursor):
     CONSTRAINT "Apartment_prices_pkey" PRIMARY KEY (id)
     );
 
-    CREATE TABLE IF NOT EXISTS public."Sofware_jobs" ( 
+    CREATE TABLE IF NOT EXISTS public."Software_jobs" ( 
     id SERIAL,
     city_id integer,
     company text,
