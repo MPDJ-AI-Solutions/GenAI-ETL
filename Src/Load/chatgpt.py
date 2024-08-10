@@ -3,22 +3,30 @@ import psycopg2
 from psycopg2 import sql
 import glob
 import math
+from configparser import ConfigParser
 
 def replace_nan(value):
     if isinstance(value, float) and math.isnan(value):
         return None
     return value
 
-def connect_to_db(config_file='./Src/Load/chatgpt_connection.cfg'):
-    config = {}
-    with open(config_file, 'r') as file:
-        for line in file:
-            name, value = line.strip().split('=')
-            config[name] = value
+# FIX - used config parser from previous prompts
+def get_config(filename='./Src/Database/chatgpt_connection.cfg', section='database'):
+    parser = ConfigParser()
+    parser.read(filename)
 
-    print("Load data to: ")
-    for key in config:
-        print(key + " " + config[key])
+    db_params = {}
+    if parser.has_section(section):
+        params = parser.items(section)
+        for param in params:
+            db_params[param[0]] = param[1]
+    else:
+        raise Exception(f'Section {section} not found in the {filename} file')
+
+    return db_params
+
+def connect_to_db(config_file='./Src/Load/chatgpt_connection.cfg'):
+    config = get_config()
 
     conn = psycopg2.connect(
         dbname=config['dbname'],
@@ -48,7 +56,7 @@ def clean_and_store_apartments_sold(apartments_sold, conn):
             cleaned_row = tuple(replace_nan(v) for v in row)
             cur.execute(
                 sql.SQL("""
-                    INSERT INTO public."Apartment_prices" (city_id, square_meters, rooms, floor, floors_number, built_year, latitude, longitude, centre_distance, poi_count, school_distance, clinic_distance, post_office_distance, kindergarden_distance, restaurant_distance, college_distance, pharmacy_distance, ownership, building_material, condition, has_parking_space, has_balcony, has_elevator, has_security, has_storage_room, price)
+                    INSERT INTO public."Apartment_prices" (city_id, square_meters, rooms, floor, floors_number, built_year, latitude, longitude, centre_distance, poi_count, school_distance, clinic_distance, post_office_distance, kindergarten_distance, restaurant_distance, college_distance, pharmacy_distance, ownership, building_material, condition, has_parking_space, has_balcony, has_elevator, has_security, has_storage_room, price)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """),
                 cleaned_row
