@@ -104,6 +104,7 @@ def clean_and_store_cities_data(city_data_joined, conn):
         'przeciętne wynagrodzenie': 'average_salary'
     })
 
+    
     # Drop the 'id' column if it exists
     if 'id' in city_data_joined.columns:
         city_data_joined = city_data_joined.drop(columns=['id'])

@@ -65,7 +65,7 @@ def create_tables(conn, cur):
         emp_salary_max real,
         b2b_salary_min real,
         b2b_salary_max real,
-        CONSTRAINT "Sofware_jobs_pkey" PRIMARY KEY (id)s
+        CONSTRAINT "Sofware_jobs_pkey" PRIMARY KEY (id)
     );
 
     ALTER TABLE IF EXISTS public."Apartment_prices"
