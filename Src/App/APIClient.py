@@ -87,7 +87,7 @@ class AIClient:
 
     
     def define_load(self, load_rules: str):
-        """Defines load rules."""
+        """Defines transform rules. Used to initialize following prompts."""
         self.load_rules = load_rules
         if self.transform_rules is not None:
             new_prompt = "Create a Python script (.py) that uses pandas and psycopg2 to store dataframes values in the database defined in previous prompts (in already generated code). \n "
