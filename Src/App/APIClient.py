@@ -112,9 +112,9 @@ class AIClient:
 
     def save_results(self, file_path: str):
         """Saves generated code in specified file."""
-        file = open(file_path, 'w')
-        file.write(self.generated_code)
-        file.close();
+        self.generated_code = AIClient.trim_code_indicators(self.generated_code)
+        with open(file_path, 'w', encoding="utf-8") as file:
+            file.write(self.generated_code)
 
 
     def etl(self, db_structure: str, extract_rules: str, transform_rules: str, load_rules: str, file_path: str):
@@ -142,3 +142,7 @@ class AIClient:
             print(response)
 
         self.generated_code = response
+
+
+    def trim_code_indicators(string: str):
+        return string.replace("```python", "").replace("```", "")
