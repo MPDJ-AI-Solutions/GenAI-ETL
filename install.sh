@@ -4,7 +4,7 @@
 # This script is used to install (reinstall) the virtual environment.
 
 echo "Deleting existing python virtual environment..."
-rm -rf venv
+rm -rf ./venv
 
 echo "Creating new virtual environment..."
 python3 -m venv ./venv
