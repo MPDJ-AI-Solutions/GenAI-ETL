@@ -5,7 +5,6 @@
 
 # Set path to the virtual environment and activate the virtual environment
 source ./venv/bin/activate
-
 # Create a temporary 'cls' command
 echo '#!/bin/bash' > /tmp/cls
 echo 'clear' >> /tmp/cls
@@ -21,8 +20,7 @@ export PATH="/tmp:$PATH"
 cd ./Src/App
 
 # Run the app
-python -m main
+python -m main debug
 
 cd ../..
-
 rm /tmp/cls

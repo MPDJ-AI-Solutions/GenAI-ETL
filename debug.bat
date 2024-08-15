@@ -9,6 +9,6 @@ call activate.bat
 cd ../../Src/App
 
 REM Run the app
-python -m main 
+python -m main debug
 
 cd ../..
