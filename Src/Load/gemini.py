@@ -4,6 +4,8 @@ import math
 import pandas as pd
 import psycopg2
 
+from measure import Stopwatch
+
 def replace_nan(value):
     if isinstance(value, float) and math.isnan(value):
         return None
@@ -216,6 +218,7 @@ def load_city_data(data_path):
 
 
 if __name__ == "__main__":
+    stopwatch = Stopwatch()
     data_path = "./Data"  # Replace with your data path
 
     apartments_prices = load_apartment_prices(data_path)
@@ -233,3 +236,5 @@ if __name__ == "__main__":
     # print(apartments_prices)
     # print(jobs_offers)
     store_dataframes(merged_city_data, apartments_prices, jobs_offers)
+
+    print("Execute time: " + str(stopwatch.end()))

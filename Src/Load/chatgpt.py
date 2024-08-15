@@ -4,6 +4,7 @@ from psycopg2 import sql
 import glob
 import math
 from configparser import ConfigParser
+from measure import Stopwatch
 
 def replace_nan(value):
     if isinstance(value, float) and math.isnan(value):
@@ -234,6 +235,7 @@ def map_city_names_to_ids(apartment_prices, jobs_offers, city_data_joined):
     return apartment_prices, jobs_offers
 
 if __name__ == '__main__':
+    stopwatch = Stopwatch()
     apartments_prices = load_apartments_prices()
     jobs_offers = load_jobs_offers()
     city_data = load_city_data()
@@ -269,3 +271,5 @@ if __name__ == '__main__':
 
     # Close the connection
     conn.close()
+
+    print("Execute time: " + str(stopwatch.end()))
