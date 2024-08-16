@@ -7,7 +7,6 @@ class AIClientMock:
 
     def define_structure(self, structure: str):
         self.structure = structure
-
         self.generated_code = structure
 
 
@@ -33,6 +32,10 @@ class AIClientMock:
             self.generated_code += "\n\n" + load_rules
         else:
             raise Exception("Not specified transform step.")
+
+
+    def debug(self, error: str):
+            self.generated_code += error
 
 
     def save_results(self, file_path: str):
