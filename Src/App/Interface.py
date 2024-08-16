@@ -1,6 +1,7 @@
 from APIClient import AIClient
 from APIClientMock import AIClientMock
 from FileReader import Reader
+import platform
 import os
 
 class Interface:
@@ -10,6 +11,13 @@ class Interface:
         self.api_client = api_client
         self.file_reader = file_reader
 
+        if platform.system() == "Windows":
+            self.clear_string = 'cls'
+        elif platform.system() == "Linux":
+            self.clear_string = "clear"
+        else:
+            raise Exception("Not supported platform")
+
 
     def wait_and_clear(self):
         input("\nPress Enter to continue...")
@@ -17,7 +25,7 @@ class Interface:
 
     
     def clear(self):
-        os.system('cls')
+        os.system(self.clear_string)
 
 
     def seperate(self, sign: str = "-", amount: int = 100):
@@ -115,6 +123,9 @@ class Interface:
                 print("Given path is not correct. Try again.")
 
         sql_script = self.file_reader.read(path)
+
+        print("File was read successfully. Data will now be send to AI model.")
+
         self.api_client.define_structure(sql_script)
 
         self.wait_and_clear()
@@ -164,19 +175,39 @@ class Interface:
         print("Type in 'default' to save output file in default location (main directiory of project).")
         
         while(True):
-            path = input()
-            if self.file_reader.is_dir(path):
+            self.path = input()
+            if self.file_reader.is_dir(self.path) or self.path == 'default':
                 break
             else:
                 print("Given path is not correct. Try again.")
         
-        if path == 'default':
+        if self.path == 'default':
             self.api_client.save_results("output.py")
         else:
-            self.api_client.save_results(path + "/output.py")
+            self.api_client.save_results(self.path + "/output.py")
 
         print("The file was successfully created!")
+        self.wait_and_clear()
         
+
+    def debug_information(self):
+        print("Do you want to debug your code? ('yes'/'no')")
+        response = self.ask_yes_no()
+        if response:
+            self.seperate()
+            print("Check your created file now. If you have any problems running it, paste error into command line and hit 'ENTER'.")
+            print("The program will try to debug your code using openAI API.")
+            
+            error_string = input()
+            self.api_client.debug(error_string)
+            if self.path == 'default':
+                self.api_client.save_results("output_debug.py")
+            else:
+                self.api_client.save_results(self.path + "/output_debug.py")
+            
+            print("\nGreat! Now your debugged file is saved on your computer. You can find it in the same location the 'output.py' file is")
+            self.wait_and_clear()
+
 
     def restart_prompt(self):
         print("Do you want to prepare another ETL process? ('yes'/'no')")
@@ -194,6 +225,7 @@ class Interface:
             self.define_transform()
             self.define_load()
             self.saving_information()
+            self.debug_information()
             restart = self.restart_prompt()
 
 
