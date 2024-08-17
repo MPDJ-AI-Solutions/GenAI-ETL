@@ -28,7 +28,7 @@ class Interface:
         os.system(self.clear_string)
 
 
-    def seperate(self, sign: str = "-", amount: int = 100):
+    def separate(self, sign: str = "-", amount: int = 100):
         print(sign * amount)
 
 
@@ -46,7 +46,7 @@ class Interface:
     def print_all_rules(self, rules):
         for index, rule in enumerate(rules):
             print(f"{index + 1}. {rule}")
-        self.seperate()
+        self.separate()
 
 
     def get_new_rule(self):
@@ -64,11 +64,11 @@ class Interface:
 
         print("Hello user.")
         print("This application was made for a purpose of a university subject - Data Warehouses")
-        self.seperate()
+        self.separate()
 
         print("Remember! To use OpenAI API you have to define OPENAI_API_KEY environment variable in your system.")
         print("Check documentation for more information.")
-        self.seperate()
+        self.separate()
 
         print("You will be guided step by step through the application.")
         print("After all steps of ETL process, the output script will be located in main directory of the project, in file output.py")
@@ -79,7 +79,7 @@ class Interface:
             rules = []
             while(True):
                 print(f"Step {step_number} - define {step_name} rules.")
-                self.seperate()
+                self.separate()
                 
                 if len(rules) != 0:
                     self.print_all_rules(rules)
@@ -98,7 +98,7 @@ class Interface:
                 self.clear()
             else:
                 print(f"Step {step_number} - define {step_name} rules.")
-                self.seperate()
+                self.separate()
                 self.print_all_rules(rules)
                 if not self.verify_rules():
                     print("Added rules were set as invalid.")
@@ -113,7 +113,7 @@ class Interface:
 
     def define_structure(self):
         print("Step 0 - define structure of the database.")
-        self.seperate()
+        self.separate()
         print("Type in path to sql script file that contains the structure of database:")
         while(True):
             path = input()
@@ -133,7 +133,7 @@ class Interface:
 
     def define_extract(self):
         print("Step 1 - define extract rules.")
-        self.seperate()
+        self.separate()
         print("Type in path to directory that contains files with data:")
         while(True):
             path = input()
@@ -172,8 +172,8 @@ class Interface:
 
     def saving_information(self):
         print("Type in full path to directory in which the output file will be saved.")
-        print("Type in 'default' to save output file in default location (main directiory of project).")
-        
+        print("Type in 'default' to save output file in default location (App directory).")
+        self.separate()
         while(True):
             self.path = input()
             if self.file_reader.is_dir(self.path) or self.path == 'default':
@@ -191,12 +191,14 @@ class Interface:
         
 
     def debug_information(self):
+        print("Now you are in debugging mode. The program will try to debug your code using openAI API.")
+        print("Insert error description into command line and hit 'ENTER'. (make sure it does not contains new line signs).")
+        self.separate()
         print("Do you want to debug your code? ('yes'/'no')")
         response = self.ask_yes_no()
-        if response:
-            self.seperate()
-            print("Check your created file now. If you have any problems running it, paste error into command line and hit 'ENTER'.")
-            print("The program will try to debug your code using openAI API.")
+        while response:
+            self.separate()
+
             
             error_string = input()
             self.api_client.debug(error_string)
@@ -205,8 +207,11 @@ class Interface:
             else:
                 self.api_client.save_results(self.path + "/output_debug.py")
             
-            print("\nGreat! Now your debugged file is saved on your computer. You can find it in the same location the 'output.py' file is")
-            self.wait_and_clear()
+            print("\nGreat! Now your debugged file is saved on your computer. You can find it in the same location the 'output.py' file is.")
+            print("Do you want to continue debugging? ('yes'/'no')")
+            response = self.ask_yes_no()
+            
+        self.wait_and_clear()
 
 
     def restart_prompt(self):
